@@ -1,0 +1,26 @@
+name: cd
+
+on: 
+    workflow_run: 
+        workflows: ["ci"]
+        types:
+            - completed
+
+jobs:
+    start:
+        runs-on: node_54
+
+        steps:
+            - name: Dừng và xóa container trên server
+              run: sudo docker container stop con-email_dc
+
+            - name: Xóa container trên server
+              run: sudo docker container remove con-email_dc
+            
+            - name: Xóa image BE
+              run: sudo docker image remove luquocphap/img-email:latest
+
+            - name: Chạy lại source
+              working-directory: /home/luquocphap/nestjs
+              run: sudo docker compose up -d
+
